@@ -21,6 +21,15 @@ Supports custom css, first it checks for a file named
 for a file in home directory `~/.smurf.css` (PS: note that the
 file in the home directory starts with a dot)
 
+## Usage:
+
+```
+smurf [PATH to Directory]
+```
+
+PS: Path to directory can be ommited to serve current
+directory.
+
 ## Install
 
 ```
@@ -28,15 +37,7 @@ sudo wget "https://raw.githubusercontent.com/oxalorg/smurf/master/smurf.py" -o /
 chmod a+x /usr/local/bin/smurf
 ```
 
-## Usage:
-
-```
-smurf [PATH to Directory]
-```
-
-PS: Path to directory can be ommited to serve current directory.
-
-## Requirements
+### Requirements
 
 * Python 3
 * Any one of the following markdown parsers
