@@ -34,8 +34,8 @@ directory.
 ## Install
 
 ```
-sudo wget "https://raw.githubusercontent.com/oxalorg/smurf/master/smurf.py" -o /usr/local/bin/smurf
-chmod a+x /usr/local/bin/smurf
+sudo wget "https://raw.githubusercontent.com/oxalorg/smurf/master/smurf.py" -O /usr/local/bin/smurf
+sudo chmod a+x /usr/local/bin/smurf
 ```
 
 ### Requirements
