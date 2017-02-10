@@ -79,7 +79,7 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
                      'content="text/html; charset=utf-8">')
             r.append('<style>%s</style>' % css)
             r.append('<title>%s</title>\n</head>' % title)
-            r.append('<body>\n<h1>%s</h1>' % title)
+            r.append('<body>\n' % title)
             r.append(content_html)
             r.append('</body></html>')
             new_f.write('\n'.join(r).encode("utf-8"))

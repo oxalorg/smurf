@@ -5,12 +5,13 @@ Preview any folder on your pc using a website.
 *Quick Demo*:
 
 ```
-cd ~/project/smurf
-smurf
+$ cd ~/project/smurf
+$ smurf
 Starting server http://localhost:3434
+...
 ```
 
-Now simply open `https://localhost:3434` in your web browser and
+Now simply open `http://localhost:3434` in your web browser and
 you can see a directory listing. You can open any files ending in 
 `.md, .mkd, .markown, .txt` and they will be converted to html on-the-fly.
 
