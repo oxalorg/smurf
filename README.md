@@ -14,7 +14,7 @@ Now simply open `https://localhost:3434` in your web browser and
 you can see a directory listing. You can open any files ending in 
 `.md, .mkd, .markown, .txt` and they will be converted to html on-the-fly.
 
-![smurf demo]("https://raw.githubusercontent.com/oxalorg/smurf/master/demo.png")
+![smurf demo](https://raw.githubusercontent.com/oxalorg/smurf/master/demo.png)
 
 Supports custom css, first it checks for a file named
 `smurf.css` in the directory to be served. Then it checks
