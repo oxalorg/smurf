@@ -2,8 +2,19 @@
 
 Preview any folder on your pc using a website.
 
-Converts any files ending in `.md, .mkd, .markown, .txt` into
-html.
+*Quick Demo*:
+
+```
+cd ~/project/smurf
+smurf
+Starting server http://localhost:3434
+```
+
+Now simply open `https://localhost:3434` in your web browser and
+you can see a directory listing. You can open any files ending in 
+`.md, .mkd, .markown, .txt` and they will be converted to html on-the-fly.
+
+![smurf demo]("https://raw.githubusercontent.com/oxalorg/smurf/master/demo.png")
 
 Supports custom css, first it checks for a file named
 `smurf.css` in the directory to be served. Then it checks
@@ -13,7 +24,7 @@ file in the home directory starts with a dot)
 ## Install
 
 ```
-sudo wget https://github.com/oxalorg/smurf/blob/master/smurf.py -o /usr/local/bin/smurf
+sudo wget "https://raw.githubusercontent.com/oxalorg/smurf/master/smurf.py" -o /usr/local/bin/smurf
 chmod a+x /usr/local/bin/smurf
 ```
 
