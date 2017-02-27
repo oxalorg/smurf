@@ -22,8 +22,14 @@ while 1:
                     stdout=subprocess.PIPE).stdout.decode("utf-8")
         break
     try:
-        import mistune
-        markdown = mistune.Markdown()
+        import markdown2
+        _md_extras = [
+            "code-friendly",
+            "fenced-code-blocks",
+            "footnotes",
+            "header-ids",
+        ]
+        markdown = markdown2.Markdown(extras=_md_extras).convert
         break
     except ImportError:
         pass
@@ -71,7 +77,7 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
             new_f.seek(0)
             f.close()
             r = []
-            title = "TODO FIX"
+            title = 'Current file: %s' % path
             r.append('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" '
                      '"http://www.w3.org/TR/html4/strict.dtd">')
             r.append('<html>\n<head>')
@@ -79,9 +85,10 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
                      'content="text/html; charset=utf-8">')
             r.append('<style>%s</style>' % css)
             r.append('<title>%s</title>\n</head>' % title)
-            r.append('<body>\n')
+            r.append('<body>')
+            r.append('<p><small>%s</small></p><hr>' % title)
             r.append(content_html)
-            r.append('</body></html>')
+            r.append('</body>\n</html>')
             new_f.write('\n'.join(r).encode("utf-8"))
             f = new_f
         else:

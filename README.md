@@ -43,4 +43,4 @@ sudo chmod a+x /usr/local/bin/smurf
 * Python 3
 * Any one of the following markdown parsers
     - Pandoc
-    - Mistune (`pip3 install --user mistune`)
+    - Markdown2 (`pip3 install --user markdown2`)
