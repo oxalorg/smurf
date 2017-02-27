@@ -12,8 +12,16 @@ import subprocess
 
 css = ""
 
-# find a valid markdown parser installed
+# using while loop is a bit of a hack
+# but it's the most intuitive to understand
+# and I can't seem to find any downsides to it
 while 1:
+    """
+    Find and set a valid markdown parser
+    Checks for one of these parsers:
+        - pandoc
+        - markdown2
+    """
     pandoc = shutil.which('pandoc')
     if pandoc:
         markdown = lambda x: subprocess.run(
@@ -56,6 +64,9 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
                 self.end_headers()
                 return None
             for index in ["index" + ext for ext in self.md_ext]:
+                # if a markdown file named "index" is available in
+                # a directory, display that instead of the default
+                # directory listing
                 index = os.path.join(path, index)
                 if os.path.exists(index):
                     path = index
@@ -69,6 +80,8 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
             return None
         base, ext = posixpath.splitext(path)
         if ext in self.md_ext:
+            # replace the contents of the markdown file
+            # with HTML before passing it to our http server
             ctype = "text/html"
             content = f.read().decode("utf-8")
             content_html = markdown(content)
