@@ -34,9 +34,17 @@ directory.
 ## Install
 
 ```
+# Download the smurf script into your local bin folder
 sudo wget "https://raw.githubusercontent.com/oxalorg/smurf/master/smurf.py" -O /usr/local/bin/smurf
+# Make the script executable
 sudo chmod a+x /usr/local/bin/smurf
+# Download a simple css file for pretty webpages
+wget "https://raw.githubusercontent.com/oxalorg/sakura/master/css/sakura.css" -O ~/.smurf.css
 ```
+
+PS: `sakura.css` is another one of my projects, feel free to
+check it out:
+[https://github.com/oxalorg/sakura](https://github.com/oxalorg/sakura)
 
 ### Requirements
 
