@@ -9,6 +9,23 @@ import urllib
 import html
 import io
 import subprocess
+from string import Template
+
+base_template = Template("""
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>${css}</style>
+    <title>${title}</title>
+</head>
+<body>
+    <p>${title}</p>
+    <hr>
+    ${content}
+</body>
+</html>
+""")
 
 css = ""
 
@@ -89,20 +106,9 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
             shutil.copyfileobj(f, new_f)
             new_f.seek(0)
             f.close()
-            r = []
             title = 'Current file: %s' % path
-            r.append('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" '
-                     '"http://www.w3.org/TR/html4/strict.dtd">')
-            r.append('<html>\n<head>')
-            r.append('<meta http-equiv="Content-Type" '
-                     'content="text/html; charset=utf-8">')
-            r.append('<style>%s</style>' % css)
-            r.append('<title>%s</title>\n</head>' % title)
-            r.append('<body>')
-            r.append('<p><small>%s</small></p><hr>' % title)
-            r.append(content_html)
-            r.append('</body>\n</html>')
-            new_f.write('\n'.join(r).encode("utf-8"))
+            r = base_template.substitute(css=css, content=content_html, title=title)
+            new_f.write(r.encode("utf-8"))
             f = new_f
         else:
             ctype = self.guess_type(path)
@@ -127,7 +133,7 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
                             "No permission to list directory")
             return None
         list.sort(key=lambda a: a.lower())
-        r = []
+
         try:
             displaypath = urllib.parse.unquote(
                 self.path, errors='surrogatepass')
@@ -136,15 +142,10 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
         displaypath = html.escape(displaypath, quote=False)
         enc = sys.getfilesystemencoding()
         title = 'Directory listing for %s' % displaypath
-        r.append('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" '
-                 '"http://www.w3.org/TR/html4/strict.dtd">')
-        r.append('<html>\n<head>')
-        r.append('<meta http-equiv="Content-Type" '
-                 'content="text/html; charset=%s">' % enc)
-        r.append('<style>%s</style>' % css)
-        r.append('<title>%s</title>\n</head>' % title)
-        r.append('<body>\n<h1>%s</h1>' % title)
-        r.append('<hr>\n<ul>')
+
+        # form the content response i.e. index of the directory
+        r = []
+        r.append('<ul>')
         for name in list:
             fullname = os.path.join(path, name)
             displayname = linkname = name
@@ -158,8 +159,11 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
             r.append('<li><a href="%s">%s</a></li>' % (urllib.parse.quote(
                 linkname, errors='surrogatepass'), html.escape(
                     displayname, quote=False)))
-        r.append('</ul>\n<hr>\n</body>\n</html>\n')
-        encoded = '\n'.join(r).encode(enc, 'surrogateescape')
+        r.append('</ul>')
+        r = base_template.substitute(content='\n'.join(r), css=css, title=title)
+        encoded = r.encode(enc, 'surrogateescape')
+
+        # transform the encoded content to a file like object
         f = io.BytesIO()
         f.write(encoded)
         f.seek(0)
