@@ -19,8 +19,10 @@ you can see a directory listing. You can open any files ending in
 
 Supports custom css, first it checks for a file named
 `smurf.css` in the directory to be served. Then it checks
-for a file in home directory `~/.smurf.css` (PS: note that the
-file in the home directory starts with a dot)
+for a file in home directory `~/.smurf.css`.
+
+CSS is provided by sakura, a simple css theme: 
+[https://github.com/oxalorg/sakura](https://github.com/oxalorg/sakura)
 
 ## Usage:
 
@@ -36,15 +38,23 @@ directory.
 ```
 # Download the smurf script into your local bin folder
 sudo wget "https://raw.githubusercontent.com/oxalorg/smurf/master/smurf.py" -O /usr/local/bin/smurf
+
 # Make the script executable
 sudo chmod a+x /usr/local/bin/smurf
-# Download a simple css file for pretty webpages
+
+# Download a simple css file for pretty webpages [1]
 wget "https://raw.githubusercontent.com/oxalorg/sakura/master/css/sakura.css" -O ~/.smurf.css
 ```
 
-PS: `sakura.css` is another one of my projects, feel free to
-check it out:
-[https://github.com/oxalorg/sakura](https://github.com/oxalorg/sakura)
+Now if you don't have pandoc installed, you'll have to download
+a markdown parser which is as easy as:
+
+```
+pip3 install --user markdown2
+# make sure Python user bin directory is in your path,
+# other wise you can also install like this:
+# sudo pip3 install markdown2
+```
 
 ### Requirements
 
