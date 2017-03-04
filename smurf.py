@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
+"""
+smurf - a simple markdown surfer
+
+https://github.com/oxalorg/smurf
+"""
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from http import HTTPStatus
 import shutil
 import posixpath
 import os
+import argparse
 import sys
 import urllib
 import html
@@ -11,7 +17,7 @@ import io
 import subprocess
 from string import Template
 
-base_template = Template("""
+BASE_TEMPLATE = Template("""
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -27,41 +33,48 @@ base_template = Template("""
 </html>
 """)
 
-css = ""
 
-# using while loop is a bit of a hack
-# but it's the most intuitive to understand
-# and I can't seem to find any downsides to it
-while 1:
+def get_markdown():
     """
     Find and set a valid markdown parser
     Checks for one of these parsers:
         - pandoc
         - markdown2
     """
-    pandoc = shutil.which('pandoc')
-    if pandoc:
+    markdown = None
+    if shutil.which('pandoc'):
         markdown = lambda x: subprocess.run(
-                    ["pandoc", "-f", "markdown", "-t", "html"],
-                    input=x.encode("utf-8"),
-                    stdout=subprocess.PIPE).stdout.decode("utf-8")
-        break
-    try:
-        import markdown2
-        _md_extras = [
-            "code-friendly",
-            "fenced-code-blocks",
-            "footnotes",
-            "header-ids",
-        ]
-        markdown = markdown2.Markdown(extras=_md_extras).convert
-        break
-    except ImportError:
-        pass
+            ["pandoc", "-f", "markdown", "-t", "html"],
+            input=x.encode("utf-8"),
+            stdout=subprocess.PIPE).stdout.decode("utf-8")
+    else:
+        try:
+            import markdown2
+            _md_extras = [
+                "code-friendly",
+                "fenced-code-blocks",
+                "footnotes",
+                "header-ids",
+            ]
+            markdown = markdown2.Markdown(extras=_md_extras).convert
+        except ImportError:
+            pass
 
-    print("No markdown parser found. Exiting.. ")
-    sys.exit(1)
+    if markdown is None:
+        print("No markdown parser found. Will serve as plain text.")
+    return markdown
 
+
+def get_css():
+    css = ""
+    if os.path.isfile("smurf.css"):
+        css = open("smurf.css").read()
+    elif os.path.isfile(os.path.expanduser("~/.smurf.css")):
+        css = open(os.path.expanduser("~/.smurf.css")).read()
+    return css
+
+
+CSS, MARKDOWN = get_css(), get_markdown()
 
 class SmurfRequestHandler(SimpleHTTPRequestHandler):
     md_ext = (".txt", ".md", ".markdown", ".mkd")
@@ -101,13 +114,13 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
             # with HTML before passing it to our http server
             ctype = "text/html"
             content = f.read().decode("utf-8")
-            content_html = markdown(content)
+            content_html = MARKDOWN(content)
             new_f = io.BytesIO()
             shutil.copyfileobj(f, new_f)
             new_f.seek(0)
             f.close()
             title = 'Current file: %s' % path
-            r = base_template.substitute(css=css, content=content_html, title=title)
+            r = BASE_TEMPLATE.substitute(css=CSS, content=content_html, title=title)
             new_f.write(r.encode("utf-8"))
             f = new_f
         else:
@@ -160,7 +173,7 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
                 linkname, errors='surrogatepass'), html.escape(
                     displayname, quote=False)))
         r.append('</ul>')
-        r = base_template.substitute(content='\n'.join(r), css=css, title=title)
+        r = BASE_TEMPLATE.substitute(content='\n'.join(r), css=CSS, title=title)
         encoded = r.encode(enc, 'surrogateescape')
 
         # transform the encoded content to a file like object
@@ -174,23 +187,25 @@ class SmurfRequestHandler(SimpleHTTPRequestHandler):
         return f
 
 
-def main():
-    if len(sys.argv) > 1:
-        path = sys.argv[1]
-        if os.path.isdir(path):
-            os.chdir(path)
-        else:
-            print(path, " is not a valid directory")
-            sys.exit(1)
+def cli():
+    parser = argparse.ArgumentParser(
+        description="a simple markdown surfer",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('dir', help="folder to serve", nargs='?', default=os.getcwd())
+    args = parser.parse_args()
 
-    global css
-    if os.path.isfile("smurf.css"):
-        css = open("smurf.css").read()
-    elif os.path.isfile(os.path.expanduser("~/.smurf.css")):
-        css = open(os.path.expanduser("~/.smurf.css")).read()
+    if not os.path.isdir(args.dir):
+        print(args.dir, " is not a valid directory")
+        sys.exit(1)
+
+    os.chdir(args.dir)
+
+
+def main():
+    cli()
     server_address = ('', 3434)
     httpd = HTTPServer(server_address, SmurfRequestHandler)
-    print("Starting server http://localhost:3434")
+    print("Starting server at http://localhost:3434")
     try:
         httpd.serve_forever()
     except:
