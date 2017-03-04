@@ -2,7 +2,11 @@
 """
 smurf - a simple markdown surfer
 
-https://github.com/oxalorg/smurf
+Authors:
+    Mitesh Shah <mitesh@oxal.org>
+
+Repository:
+    https://github.com/oxalorg/smurf
 """
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from http import HTTPStatus
