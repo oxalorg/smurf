@@ -56,6 +56,14 @@ pip3 install --user markdown2
 # sudo pip3 install markdown2
 ```
 
+## Why?
+
+I write notes using plain markdown files in a dropbox folder.
+It works really well with me, especially after combining it with
+zsh and vim. But the one thing I can't do is view them in a
+pretty format. This is why I made this script to quickly browse
+those markdown files.
+
 ### Requirements
 
 * Python 3
